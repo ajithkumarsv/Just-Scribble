@@ -6,13 +6,14 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
     
-     [SerializeField] protected Dictionary<int2, Troop> troops = new Dictionary<int2, Troop>();
+    [SerializeField] protected List<Troop> troopList = new List<Troop>();
 
+    [SerializeField] protected Queue<Troop> troopQueuue= new Queue<Troop>();
 
      
-    public virtual IEnumerator TakeTurn()
+    public virtual  IEnumerator TakeTurn()
     {
-        yield return null;
+        throw new System.NotImplementedException("TakeTurn not implemented in base class Controller");
     }
     public virtual void EndTurn()
     {

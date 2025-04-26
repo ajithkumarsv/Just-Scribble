@@ -2,7 +2,7 @@ using System.Collections;
 
 public interface IUnit
 {
-    public abstract PlayerType GetType();
+    public abstract PlayerType GetPlayerType();
 }
 public interface IPlayable
 {

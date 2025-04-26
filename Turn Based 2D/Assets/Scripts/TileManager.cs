@@ -73,11 +73,11 @@ public class TileManager : Singleton<TileManager>
             }
         }
 
-        var playertroops = FindObjectsByType<Troop>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var tr = FindObjectsByType<Troop>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-        foreach (Troop item in playertroops)
+        foreach (Troop item in tr)
         {
-            if (item.GetType() == PlayerType.Player)
+            if (item.GetPlayerType() == PlayerType.Player)
             {
                 Vector3 v = item.transform.position;
                 v.z = 0;
@@ -89,7 +89,7 @@ public class TileManager : Singleton<TileManager>
                 tileData[index].isOccpuied = true;
                 tileData[index].playerType = (byte)PlayerType.Player;
             }
-            else if (item.GetType() == PlayerType.Enemy)
+            else if (item.GetPlayerType() == PlayerType.Enemy)
             {
                 Vector3 v = item.transform.position;
                 v.z = 0;
@@ -123,6 +123,45 @@ public class TileManager : Singleton<TileManager>
     public TileData GetCurrentTile(int index)
     {
         return tileData[index];
+    }
+    public Troop GetTroopAtTile(int2 tilePos)
+    {
+        Troop troop = null;
+        if (playerTroops.ContainsKey(tilePos))
+        {
+        
+            troop = playerTroops[tilePos];
+        }
+        else if (enemyTroops.ContainsKey(tilePos))
+        {
+            troop = enemyTroops[tilePos];
+        }
+        return troop;
+    }
+
+    public void ReplaceTroopTile(int2 oldPos, int2 newPos, Troop troop)
+    {
+        if (playerTroops.ContainsKey(oldPos))
+        {
+            playerTroops.Remove(oldPos);
+            playerTroops.Add(newPos, troop);
+        }
+        else if (enemyTroops.ContainsKey(oldPos))
+        {
+            enemyTroops.Remove(oldPos);
+            enemyTroops.Add(newPos, troop);
+        }
+    }
+    public void RemoveTroopFromList(int2 tilePos, PlayerType playerType)
+    {
+        if (playerType == PlayerType.Player && playerTroops.ContainsKey(tilePos))
+        {
+            playerTroops.Remove(tilePos);
+        }
+        else if (playerType == PlayerType.Enemy && enemyTroops.ContainsKey(tilePos))
+        {
+            enemyTroops.Remove(tilePos);
+        }
     }
     public bool IsInTileBounds(Vector2Int tilePos)
     {
