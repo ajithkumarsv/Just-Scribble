@@ -13,6 +13,7 @@ public class GameManager : Singleton<GameManager>
 
     public IEnumerator Start()
     {
+        // Application.targetFrameRate =60;
         yield return new WaitForSeconds(2);
 
         StartCoroutine(PlayGame());
@@ -58,6 +59,16 @@ public class GameManager : Singleton<GameManager>
             td.playerType = (byte)PlayerType.None;
             TileManager.Instance.SetTileData(index, td);
             Destroy(troop.gameObject);
+        }
+        if(TileManager.Instance.IsEnemyEmpty(PlayerType.Player))
+        {
+             Debug.LogWarning("All Enemy Dead Player Won");
+        }
+        
+         else if(TileManager.Instance.IsEnemyEmpty(PlayerType.Enemy))
+        {
+            Debug.LogWarning("All Players Dead Enemy Won");
+
         }
 
     }

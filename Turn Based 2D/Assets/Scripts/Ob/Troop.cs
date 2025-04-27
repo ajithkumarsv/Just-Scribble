@@ -91,7 +91,7 @@ public class Troop : MonoBehaviour, IUnit, IPlayable
         
         int2[] path = TileManager.Instance.FindPath(trooptile.position, playerType);
         TileManager.Instance.DrawPath(path);
-        yield return new WaitForSeconds(0.3f);
+       yield return new WaitForSeconds(TileManager.Instance.troopDelay);
 
         Debug.Log("Path length: " + path.Length);
         Debug.Log("Point 2");
@@ -101,17 +101,17 @@ public class Troop : MonoBehaviour, IUnit, IPlayable
             Debug.Log("No Path Found");
             yield break;
         }
-        int index = TileManager.Instance.TilePositionToArrayIndex(path[path.Length-1]);
-        targetTile=TileManager.Instance.GetCurrentTile(index);
-        targetTroop = TileManager.Instance.GetTroopAtTile(path[path.Length-1]);
+        
         if(targetTroop !=null)
         {
             Debug.Log("Target Troop Found");
         }
-        if (path.Length <= AttackRange + 1)
+        yield return null;
+        var enemyTiles =TileManager.Instance.findEnemiesInRange(trooptile.position,AttackRange,playerType);
+        if (enemyTiles.Length>0)
         {
             
-             yield return StartCoroutine(AttackEnemy());
+             yield return StartCoroutine(AttackEnemy(enemyTiles));
              yield break;
         }
         Debug.Log("Point 3");
@@ -139,27 +139,30 @@ public class Troop : MonoBehaviour, IUnit, IPlayable
                 TileManager.Instance.SetTileData(newIndex, newTile);
                 trooptile = newTile;
 
-                yield return new WaitForSeconds(0.35f);
-                if (path.Length <= AttackRange + 1)
-                {
-                    yield return StartCoroutine(AttackEnemy());
-                    yield break;
-                }
+                yield return new WaitForSeconds(TileManager.Instance.troopDelay);
+                // if (path.Length <= AttackRange + 1)
+                // {
+                //     yield return StartCoroutine(AttackEnemy(enemyTiles));
+                //     yield break;
+                // }
             }
         }
         Debug.Log("Point 4");
         // TileManager.Instance.ClearPath();
     }
 
-    public IEnumerator AttackEnemy()
+    public IEnumerator AttackEnemy(int2[] enemyTiles)
     {
-
+        int index = TileManager.Instance.TilePositionToArrayIndex(enemyTiles[0]);
+        targetTile=TileManager.Instance.GetCurrentTile(index);
+        targetTroop = TileManager.Instance.GetTroopAtTile(enemyTiles[0]);
+        TileManager.Instance.DrawTarget(enemyTiles);
         if(targetTile.isOccpuied && targetTroop != null)
         {
             targetTroop.GetComponent<Health>().TakeDamage(AttackDamage);
         }   
         Debug.Log("Attack Enemy");
-        yield return new WaitForSeconds(0.5f);
+       yield return new WaitForSeconds(TileManager.Instance.troopDelay);
         yield break;
     }
 

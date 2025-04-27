@@ -14,9 +14,11 @@ public class TileManager : Singleton<TileManager>
 
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private GameObject selectionPrefab;
+    [SerializeField] private GameObject pathPrefab;
+    [SerializeField] private GameObject targetprefab;
     [SerializeField] private TileData[] tileData;
 
-
+    [SerializeField]public  float troopDelay=0.35f;
     [SerializeField] public Dictionary<int2, Troop> playerTroops = new Dictionary<int2, Troop>();
     [SerializeField] public Dictionary<int2, Troop> enemyTroops = new Dictionary<int2, Troop>();
 
@@ -30,6 +32,7 @@ public class TileManager : Singleton<TileManager>
     int2 startPos;
 
     public List<GameObject> pathGameObject = new List<GameObject>();
+    public List<GameObject> targetGameObject = new List<GameObject>();
 
     [SerializeField] public PathFinder pathFinder;
     [SerializeField] public EnemyFinder enemyFinder;
@@ -73,7 +76,7 @@ public class TileManager : Singleton<TileManager>
             }
         }
 
-        var tr = FindObjectsByType<Troop>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var tr = FindObjectsByType<Troop>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
 
         foreach (Troop item in tr)
         {
@@ -137,6 +140,19 @@ public class TileManager : Singleton<TileManager>
             troop = enemyTroops[tilePos];
         }
         return troop;
+    }
+
+    public bool IsEnemyEmpty(PlayerType playerType)
+    {
+        if (playerType == PlayerType.Player)
+        {
+            return playerTroops.Count == 0;
+        }
+        else if (playerType == PlayerType.Enemy)
+        {
+            return enemyTroops.Count == 0;
+        }
+        return false;
     }
 
     public void ReplaceTroopTile(int2 oldPos, int2 newPos, Troop troop)
@@ -281,7 +297,7 @@ public class TileManager : Singleton<TileManager>
             Debug.Log(" path length" + path.Length);
             for (int i = 0; i < path.Length; i++)
             {
-                pathGameObject.Add(Instantiate(selectionPrefab, TilePositionToWorldPosition(path[i]), Quaternion.identity));
+                pathGameObject.Add(Instantiate(pathPrefab, TilePositionToWorldPosition(path[i]), Quaternion.identity));
             }
         }
     }
@@ -295,10 +311,27 @@ public class TileManager : Singleton<TileManager>
         pathGameObject.Clear();
         for (int i = 0; i < path.Length; i++)
         {
-            pathGameObject.Add(Instantiate(selectionPrefab, TilePositionToWorldPosition(path[i]), Quaternion.identity));
+            pathGameObject.Add(Instantiate(pathPrefab, TilePositionToWorldPosition(path[i]), Quaternion.identity));
         }
     }
 
+    public void DrawTarget(int2[] target)
+    {
+         foreach (GameObject obj in targetGameObject)
+        {
+            Destroy(obj);
+        }
+        targetGameObject.Clear();
+        for (int i = 0; i < target.Length; i++)
+        {
+            targetGameObject.Add(Instantiate(targetprefab, TilePositionToWorldPosition(target[i]), Quaternion.identity));
+        }
+    }
+
+    public int2[] findEnemiesInRange(int2 startPos, int range, PlayerType playerType)
+    {
+        return enemyFinder.FindEnemyInRange(startPos,  playerType,range);
+    }
     public int2[] FindPath(int2 startPos, PlayerType playerType)
     {
         return enemyFinder.FindEnemyPath(startPos, playerType);

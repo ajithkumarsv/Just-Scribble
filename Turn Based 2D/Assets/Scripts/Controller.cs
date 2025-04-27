@@ -8,7 +8,7 @@ public class Controller : MonoBehaviour
     
     [SerializeField] protected List<Troop> troopList = new List<Troop>();
 
-    [SerializeField] protected Queue<Troop> troopQueuue= new Queue<Troop>();
+    
 
      
     public virtual  IEnumerator TakeTurn()
@@ -18,5 +18,10 @@ public class Controller : MonoBehaviour
     public virtual void EndTurn()
     {
         
+    }
+
+    public List<Troop> GetTroopsList()
+    {
+        return troopList;
     }
 }

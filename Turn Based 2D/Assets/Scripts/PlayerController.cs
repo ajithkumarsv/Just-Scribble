@@ -17,7 +17,7 @@ public class PlayerController : Controller
         yield return null;
         troopList = TileManager.Instance.playerTroops.ToList().Select(x => x.Value).ToList();
         Debug.Log("PLayer Count  after start " + troopList.Count);
-        troopQueuue = new Queue<Troop>(troopList);
+        // troopQueuue = new Queue<Troop>(troopList);
     }
 
 

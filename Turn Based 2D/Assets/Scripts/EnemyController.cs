@@ -15,7 +15,7 @@ public class EnemyController : Controller
         yield return null;
         troopList = TileManager.Instance.enemyTroops.ToList().Select(x => x.Value).ToList();
          Debug.Log("Enemy Count  after start " +troopList.Count);
-        troopQueuue = new Queue<Troop>(troopList);
+        // troopQueuue = new Queue<Troop>(troopList);
     }
 
 
